@@ -1,0 +1,46 @@
+this is how i invoke the cerebas  api
+
+//store in .env
+CEREBRAS_API_KEY=csk-42356mk8ejtvdk2j59c2ceyyfwwyyndtcxrdhjye4td8ymv4
+CAI_MODEL=qwen-3-235b-a22b-instruct-2507
+OLLAMA_API_BASE=http://localhost:8000/v1 # note, maybe you have a different endpoint
+
+
+import os
+from cerebras.cloud.sdk import Cerebras
+
+client = Cerebras(
+    # This is the default and can be omitted
+    api_key=os.environ.get("CEREBRAS_API_KEY")
+)
+
+stream = client.chat.completions.create(
+    messages=[
+        {
+            "role": "system",
+            "content": ""
+        },
+        {
+            "role": "user",
+            "content": "hello"
+        },
+        {
+            "role": "assistant",
+            "content": "Hello! How can I assist you today? 😊"
+        }
+    ],
+    model="CAI_MODEL",
+    stream=True,
+    max_completion_tokens=20000,
+    temperature=0.7,
+    top_p=0.8
+)
+
+for chunk in stream:
+  print(chunk.choices[0].delta.content or "", end="")
+
+
+
+
+i want this to create a wrapper for this cerebas to 100% mimic ollama request and response format, containerize it expose to port 6000. make the streaming output 100% identical to Ollama’s token-by-token streaming chunks with object: "chat.completion.chunk" and proper created timestamps so it’s indistinguishable for any client expecting Ollama. That’ll make it a true drop-in replacement.
+

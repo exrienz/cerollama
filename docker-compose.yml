@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  cerebras-ollama-wrapper:
+    build: .
+    ports:
+      - "6000:6000"
+    environment:
+      - CEREBRAS_API_KEY=${CEREBRAS_API_KEY}
+      - CAI_MODEL=${CAI_MODEL:-qwen-3-235b-a22b-instruct-2507}
+    env_file:
+      - .env
